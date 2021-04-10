@@ -1,2 +1,2 @@
 # BeeCloud-Proxy
-A proxy for Nukkit
+开发中的基于UDP的Nukkit群组软件
