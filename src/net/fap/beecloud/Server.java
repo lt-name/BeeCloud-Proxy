@@ -2,17 +2,27 @@ package net.fap.beecloud;
 
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.MovePlayerPacket;
+import net.fap.beecloud.console.ServerLogger;
+import net.fap.beecloud.console.simple.CommandHandler;
+import net.fap.beecloud.console.simple.HelpCommand;
+import net.fap.beecloud.console.simple.ListCommand;
 import net.fap.beecloud.network.Packet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Server {
 
     public int port1; //get packet link
     public int port2; //send packet link
+
+    public static ArrayList<SynapsePlayer> onLinePlayerList = new ArrayList<>();
 
     public Server(int port)
     {
@@ -21,8 +31,16 @@ public class Server {
     }
 
     public void init() {
-        info("- BeeCloud Proxy Start -");
-        info("- For help type /help");
+
+
+        ServerLogger.info("- BeeCloud Proxy Start -");
+
+        CommandHandler.registerCommand(new HelpCommand());
+        CommandHandler.registerCommand(new ListCommand());
+
+        ServerLogger.info("- For help type /help");
+
+
         try {
             new Thread(new Runnable() {
                 @Override
@@ -33,6 +51,23 @@ public class Server {
                         e.printStackTrace();
                     }
                 }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        while (true)
+                        {
+                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                            String commandStr = null;
+                            while ((commandStr=br.readLine())!=null)
+                                CommandHandler.handleCommand(commandStr);
+                        }
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                  }
             }).start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,40 +81,23 @@ public class Server {
             DatagramPacket dp = new DatagramPacket(bytes, bytes.length);
             ds.receive(dp);
             String pk1 = new String(dp.getData(), 0, dp.getLength());
-            net.fap.beecloud.network.mcpe.DataPacket dataPacket = Packet.handlePacket(pk1);
-
+            Packet.handlePacket(pk1);
         }
     }
 
-    private void send(DataPacket dataPacket) throws IOException {
+    public void send(DataPacket dataPacket){
         try{
-            if (dataPacket instanceof MovePlayerPacket)
-            { ;
                 DatagramSocket ds = new DatagramSocket();
                 byte[] bytes = dataPacket.toString().getBytes();
                 InetAddress address =InetAddress.getByName("127.0.0.1");
                 DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
                 ds.send(dp);
                 ds.close();
-            }
         }catch (Exception e)
         {
             e.printStackTrace();
         }
     }
 
-
-
-    public void info(String message)
-    {
-        System.out.println(getTime()+"[Server] "+message);
-    }
-
-    private String getTime()
-    {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        return "["+sdf.format(date)+"]";
-    }
 
 }

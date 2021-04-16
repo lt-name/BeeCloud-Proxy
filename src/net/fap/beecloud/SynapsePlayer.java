@@ -1,8 +1,8 @@
 package net.fap.beecloud;
 
 import cn.nukkit.Player;
-import net.fap.beecloud.network.mcpe.DataPacket;
-import net.fap.beecloud.network.mcpe.TextPacket;
+import cn.nukkit.network.protocol.DisconnectPacket;
+import cn.nukkit.network.protocol.LoginPacket;
 
 import java.util.UUID;
 
@@ -14,54 +14,40 @@ import java.util.UUID;
 
 public class SynapsePlayer {
 
-    public double x;
-    public double y;
-    public double z;
-    public Player player;
-    public UUID uuid;
+    public UUID clientUUid;
+    public long clientID;
+    public String player;
+    public String address;;
 
-    public SynapsePlayer(Player player)
+    public SynapsePlayer(String player, String address, UUID clientUUId, long clientID)
     {
+        this.clientUUid = clientUUId;
+        this.clientID = clientID;
         this.player = player;
-        this.uuid = player.getUniqueId();
+        this.address = address;
     }
 
-    public SynapsePlayer getPlayer()
+    public static void addPlayer(String[] pk2)
     {
-        return this;
+        String name = pk2[0];
+        String address = pk2[1];
+        String uuid = pk2[2];
+        String clientID = pk2[3];
+        Server.onLinePlayerList.add(new SynapsePlayer(name,address,UUID.randomUUID(),(long) Integer.valueOf(clientID)));
     }
 
-    public double getX()
+    public static SynapsePlayer getPlayer(String player)
     {
-        return this.x;
+        for (int i=0; i<Server.onLinePlayerList.size(); i++)
+            if (Server.onLinePlayerList.get(i).player.equals(player))
+                return Server.onLinePlayerList.get(i);
+            return null;
     }
 
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public void sendPacketMessage(String string)
-    {
-        TextPacket pk1 = new TextPacket();
-        pk1.setPlayer(this.player); pk1.putString(string);
-
-    }
-
-    public void sendPacketTitle(DataPacket packet)
-    {
-        if (packet instanceof TextPacket)
-        {
-            player.sendTitle(((TextPacket) packet).getText());
-        }
-    }
-
-    public void sendPacket()
+    public static void removePlayer(DisconnectPacket packet)
     {
 
     }
+
 
 }
