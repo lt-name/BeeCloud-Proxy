@@ -11,4 +11,5 @@ https://github.com/rainbow188/BeeCloudNukkitAPI
 - [ ] LoginPacket 玩家进服数据包
 - [ ] QuitPacket 玩家退服数据包
 - [x] 控制台命令系统
+- [x] SynapsePlayer 玩家类
 - [ ] CustomPacket 自定义数据包
