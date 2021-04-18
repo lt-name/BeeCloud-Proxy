@@ -2,7 +2,7 @@
 ## 什么是 BeeCloud(峰云)?
 一款基于TCP的Nukkit数据包转发软件，实现多个服务器之间相互沟通
 ## 怎么使用BeeCloud?
-下载我们的项目并构建，或者在http://ci.fapixel.com:8080上下载
+下载我们的项目并构建，或者在 http://ci.fapixel.com:8080 上下载
 ### SynapseAPI下载
 你需要安装BeeCloudNukkit-API在你的子服务器中，这样才能互相沟通
 https://github.com/rainbow188/BeeCloudNukkitAPI
