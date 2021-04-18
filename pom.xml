@@ -7,6 +7,14 @@
     <groupId>net.fap.beecloud</groupId>
     <artifactId>BeeCloud</artifactId>
     <version>0.0.1</version>
+
+    <repositories>
+        <repository>
+            <id>nukkitx-repo-snapshot</id>
+            <url>https://repo.nukkitx.com/maven-snapshots/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
