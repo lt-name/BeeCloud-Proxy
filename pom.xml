@@ -13,6 +13,10 @@
             <id>nukkitx-repo-snapshot</id>
             <url>https://repo.nukkitx.com/maven-snapshots/</url>
         </repository>
+        <repository>
+            <id>dom4j</id>
+            <url>https://mvnrepository.com/artifact/dom4j/dom4j</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -22,6 +26,13 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
