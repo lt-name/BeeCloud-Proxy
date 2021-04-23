@@ -7,6 +7,8 @@ import net.fap.beecloud.SynapsePlayer;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
 import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
+import net.fap.beecloud.network.mcpe.protocol.ServerChatPacket;
+import net.fap.beecloud.network.mcpe.protocol.ServerUpdatePacket;
 
 public class Packet {
 
@@ -29,6 +31,16 @@ public class Packet {
                 pk3.putString(pk2);
                 BeeCloud.server.send(pk3);
                 return;
+            }
+            else if (pk.contains("ServerUpdatePacket"))
+            {
+                BeeCloud.server.send(new ServerUpdatePacket());
+            }else if (pk.contains("ServerChatPacket"))
+            {
+                String[] pk2 = pk.split("\\:");
+                ServerChatPacket pk3 = new ServerChatPacket();
+                pk3.putString(pk2);
+                BeeCloud.server.send(pk3);
             }
         }
         if (pk1 instanceof MovePlayerPacket)

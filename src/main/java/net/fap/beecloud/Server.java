@@ -2,12 +2,13 @@ package net.fap.beecloud;
 
 import cn.nukkit.network.protocol.DataPacket;
 import net.fap.beecloud.console.ServerLogger;
-import net.fap.beecloud.console.simple.CommandHandler;
-import net.fap.beecloud.console.simple.HelpCommand;
-import net.fap.beecloud.console.simple.ListCommand;
-import net.fap.beecloud.console.simple.VersionCommand;
+import net.fap.beecloud.console.simple.*;
+import net.fap.beecloud.event.BeeCloudEvent;
+import net.fap.beecloud.event.BeeCloudListener;
+import net.fap.beecloud.event.packet.DataPacketSendEvent;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
+import net.fap.beecloud.plugin.PluginLoader;
 
 import java.io.*;
 import java.net.*;
@@ -22,12 +23,17 @@ public class Server {
 
     private String serverPath = String.valueOf(System.getProperty("user.dir"));
     private File config = new File(this.getDataPath()+"\\server.properties");
+    private File pluginData = new File(this.getDataPath()+"\\plugins");
+    private File pluginList = new File(this.getDataPath()+"\\pluginList.xml");
+
+    public BeeCloudEvent beeCloudEventListener;
 
     public static ArrayList<SynapsePlayer> onLinePlayerList = new ArrayList<>();
 
     public Server()
     {
         createConfig();
+        if (!pluginData.exists()) pluginData.mkdir();
         this.port1 = Integer.parseInt(this.getConfigValue("server-port"));
         this.port2 = this.port1+1;
         this.clientPassword = this.getConfigValue("synapse-password");
@@ -42,6 +48,14 @@ public class Server {
         CommandHandler.registerCommand(new HelpCommand());
         CommandHandler.registerCommand(new ListCommand());
         CommandHandler.registerCommand(new VersionCommand());
+        CommandHandler.registerCommand(new PluginListCommand());
+
+        this.beeCloudEventListener = new BeeCloudEvent();
+        this.beeCloudEventListener.registerListener(new BeeCloudListener());
+
+        ServerLogger.info("- Start to load your plugin -");
+
+        PluginLoader.loadPlugin(this);
 
         ServerLogger.info("- For help type /help");
 
@@ -97,11 +111,18 @@ public class Server {
                 InetAddress address =InetAddress.getByName("127.0.0.1");
                 DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
                 ds.send(dp);
+                DataPacketSendEvent event = new DataPacketSendEvent();
+                event.call();
                 ds.close();
         }catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+
+    public int getOnlinePlayerCount()
+    {
+        return onLinePlayerList.size();
     }
 
     public void send(BeeCloudPacket dataPacket)
@@ -124,10 +145,27 @@ public class Server {
     {
         if (!config.exists())
         {
-            writeData("#Properties Config File");
-            writeData("server-port=8888");
-            writeData("server-ip=0.0.0.0");
-            writeData("synapse-password=123456789");
+            writeData(config,"#Properties Config File");
+            writeData(config,"server-port=8888");
+            writeData(config,"server-ip=0.0.0.0");
+            writeData(config,"synapse-password=123456789");
+        }
+        if (!pluginList.exists())
+        {
+            writeData(pluginList,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "<plugins>\n" +
+                    "    <!--- <test pattern=\"例子\" />\n" +
+                    "    添加插件的例子\n" +
+                    "      <plugin>\n" +
+                    "        <name>BeeCloud实例插件</name>\n" +
+                    "        <jar>BeeCloud/plugins/Demo.jar</jar>\n" +
+                    "        <class>net.fap.proxy.demo.Main</class>\n" +
+                    "    </plugin>\n" +
+                    "    name是插件的名字\n" +
+                    "    jar是插件的路径\n" +
+                    "    class是插件主类的位置\n" +
+                    "    <test pattern=\"NTSC\" /> -->\n" +
+                    "</plugins>");
         }
     }
 
@@ -152,16 +190,14 @@ public class Server {
         return null;
     }
 
-    private void writeData(String data)
+    private void writeData(File file,String data)
     {
         try{
-            if (!config.exists()) config.createNewFile();
-            FileWriter fileWriter = new FileWriter(config,true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            if (!file.exists()) file.createNewFile();
+            BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (new FileOutputStream (file,true),"UTF-8"));
             bufferedWriter.write(data);
             bufferedWriter.newLine();;
             bufferedWriter.close();
-            fileWriter.close();
         }catch (Exception e)
         {
             e.printStackTrace();
