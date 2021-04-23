@@ -14,3 +14,8 @@ https://github.com/rainbow188/BeeCloudNukkitAPI
 - [x] SynapsePlayer 玩家类
 - [x] CustomPacket 自定义数据包
 - [ ] TransferPacket 玩家传送数据包
+- [x] Event 事件系统
+- [x] Listener 事件监听器
+- [x] PluginLoadder 插件加载器  
+
+##如何编写 BeeCloud-Proxy的插件?
