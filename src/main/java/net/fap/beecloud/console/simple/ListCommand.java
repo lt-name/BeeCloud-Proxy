@@ -7,14 +7,15 @@ import net.fap.beecloud.console.ServerLogger;
 public class ListCommand extends CommandHandler{
 
     public String commandStr = "list";
+    public String commandUsage = "查看在线玩家列表";
 
     public ListCommand(){
-        setCommandStr(this.commandStr);
+        setCommandStr(this.commandStr,this.commandUsage);
     }
 
     @Override
-    public void setCommandStr(String commandStr) {
-        super.setCommandStr(this.commandStr);
+    public void setCommandStr(String commandStr, String commandUsage) {
+        super.setCommandStr(commandStr, commandUsage);
     }
 
     @Override

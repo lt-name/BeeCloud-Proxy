@@ -3,6 +3,10 @@ package net.fap.beecloud.console;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * @author catrainbow
+ */
+
 public class ServerLogger {
 
     public static void info(String message)
@@ -12,13 +16,13 @@ public class ServerLogger {
 
     public static void waring(String message)
     {
-        System.out.println(getTime()+"[WARING] "+message);
+        System.out.println(getTime()+ "[WARING] "+message);
     }
 
     private static String getTime()
     {
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return "["+sdf.format(date)+"]";
     }
 

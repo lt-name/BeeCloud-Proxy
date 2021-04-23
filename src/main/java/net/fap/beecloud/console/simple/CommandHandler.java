@@ -9,6 +9,7 @@ public class CommandHandler {
 	public static HashMap<String, CommandHandler> commandMap = new HashMap<>();
 
 	public String commandStr;
+	public String commandUsage;
 
 	public static void registerCommand(CommandHandler commandHandler) {
 		commandMap.put(commandHandler.commandStr, commandHandler);
@@ -20,8 +21,9 @@ public class CommandHandler {
 		} else ServerLogger.info("Unknown command! type help for help.");
 	}
 
-	public void setCommandStr(String commandStr) {
+	public void setCommandStr(String commandStr,String commandUsage) {
 		this.commandStr = commandStr;
+		this.commandUsage = commandUsage;
 	}
 
 	public void runCommand() {

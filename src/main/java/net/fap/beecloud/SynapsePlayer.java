@@ -1,6 +1,9 @@
 package net.fap.beecloud;
 
 import cn.nukkit.network.protocol.DisconnectPacket;
+import net.fap.beecloud.console.ServerLogger;
+import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
+import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
 
 import java.util.UUID;
 
@@ -12,12 +15,12 @@ import java.util.UUID;
 
 public class SynapsePlayer {
 
-    public UUID clientUUid;
-    public long clientID;
+    public String clientUUid;
+    public String clientID;
     public String player;
     public String address;;
 
-    public SynapsePlayer(String player, String address, UUID clientUUId, long clientID)
+    public SynapsePlayer(String player, String address, String clientUUId, String clientID)
     {
         this.clientUUid = clientUUId;
         this.clientID = clientID;
@@ -25,13 +28,16 @@ public class SynapsePlayer {
         this.address = address;
     }
 
-    public static void addPlayer(String[] pk2)
+    public static void addPlayer(LoginPacket packet)
     {
-        String name = pk2[0];
-        String address = pk2[1];
-        String uuid = pk2[2];
-        String clientID = pk2[3];
-        Server.onLinePlayerList.add(new SynapsePlayer(name,address,UUID.randomUUID(),(long) Integer.valueOf(clientID)));
+        Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(),packet.address,packet.uuid,packet.clientID));
+        ServerLogger.info(packet.getPlayer()+"("+packet.address+") joined the game.");
+    }
+
+    public static void removePlayer(QuitPacket packet)
+    {
+        Server.onLinePlayerList.remove(getPlayer(packet.getPlayer()));
+        ServerLogger.info(packet.getPlayer()+" quited the game.");
     }
 
     public static SynapsePlayer getPlayer(String player)
@@ -40,11 +46,6 @@ public class SynapsePlayer {
             if (Server.onLinePlayerList.get(i).player.equals(player))
                 return Server.onLinePlayerList.get(i);
             return null;
-    }
-
-    public static void removePlayer(DisconnectPacket packet)
-    {
-
     }
 
 

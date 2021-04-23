@@ -6,7 +6,7 @@ public class BeeCloud {
 
     public static void main(String[] args)
     {
-        server = new Server(8888);
+        server = new Server();
         server.init();
     }
 
