@@ -22,9 +22,9 @@ public class Server {
     public String clientPassword;
 
     private String serverPath = String.valueOf(System.getProperty("user.dir"));
-    private File config = new File(this.getDataPath()+"\\server.properties");
-    private File pluginData = new File(this.getDataPath()+"\\plugins");
-    private File pluginList = new File(this.getDataPath()+"\\pluginList.xml");
+    private File config = new File(this.getDataPath()+"/server.properties");
+    private File pluginData = new File(this.getDataPath()+"/plugins");
+    private File pluginList = new File(this.getDataPath()+"/pluginList.xml");
 
     public BeeCloudEvent beeCloudEventListener;
 
@@ -61,33 +61,27 @@ public class Server {
 
 
         try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        receive();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            new Thread(() -> {
+                try {
+                    receive();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }).start();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        while (true)
-                        {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                            String commandStr = null;
-                            while ((commandStr=br.readLine())!=null)
-                                CommandHandler.handleCommand(commandStr);
-                        }
-                    }catch (Exception e)
+            new Thread(() -> {
+                try{
+                    while (true)
                     {
-                        e.printStackTrace();
+                        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                        String commandStr;
+                        while ((commandStr=br.readLine())!=null)
+                            CommandHandler.handleCommand(commandStr);
                     }
-                  }
-            }).start();
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+              }).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
