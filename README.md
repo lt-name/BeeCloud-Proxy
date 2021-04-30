@@ -7,15 +7,68 @@
 你需要安装BeeCloudNukkit-API在你的子服务器中，这样才能互相沟通
 https://github.com/rainbow188/BeeCloudNukkitAPI
 ## 开发日志
-- [x] MovePlayerPacket 移动数据包
-- [x] LoginPacket 玩家进服数据包
-- [x] QuitPacket 玩家退服数据包
-- [x] Console 控制台命令系统
-- [x] SynapsePlayer 玩家类
-- [x] CustomPacket 自定义数据包
-- [ ] TransferPacket 玩家传送数据包
-- [x] Event 事件系统
-- [x] Listener 事件监听器
-- [x] PluginLoadder 插件加载器  
+- [x] 多个服务器数据包和自定义数据包通信
+- [x] 多个服务器人数同步
+- [x] 插件系统 - 面相开发者的BeeCloud环境
+- [x] 事件系统 - 事件监听器
 
-##如何编写 BeeCloud-Proxy的插件?
+## 如何安装插件到你的BeeCloud服务器?
+将插件放进beeCloud/plugins文件夹里面并打开BeeCloud生成的
+pluginsList.xml文件，写入下面插件配置
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins>
+
+
+    <!--- <test pattern="注释内容" />
+    添加插件的例子
+      <plugin>
+        <name>BeeCloud实例插件</name>
+        <jar>BeeCloud/plugins/Demo.jar</jar>
+        <class>net.fap.proxy.demo.Main</class>
+    </plugin>
+    name是插件的名字
+    jar是插件的路径
+    class是插件主类的位置
+    <test pattern="NTSC" /> -->
+
+
+</plugins>
+```
+
+## 如何编写 BeeCloud-Proxy的插件?
+```
+package net.fap.beecloud.example;
+
+import net.fap.beecloud.Server;
+import net.fap.beecloud.console.ServerLogger;
+import net.fap.beecloud.plugin.PluginCase;
+
+/**
+ * BeeCloud 实例插件
+ *
+ * @author catrainbow
+ */
+
+//插件必须 implements PluginCase 并调用onLoad和onEnable入口方法
+public class Main implements PluginCase {
+
+    /**
+     * 当插件被加载时会触发
+     */
+    public void onLoad()
+    {
+        ServerLogger.info("开始加载插件 ExamplePlugin");
+        Server server = Server.getServer();
+    }
+
+    /**
+     * 当插件被开启时会触发
+     */
+    public void onEnable()
+    {
+        ServerLogger.info("开始开启插件 ExamplePlugin");
+    }
+
+}
+```
