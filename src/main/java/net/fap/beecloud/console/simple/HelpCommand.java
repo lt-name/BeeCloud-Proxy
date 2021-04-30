@@ -18,7 +18,7 @@ public class HelpCommand extends CommandHandler {
 
     @Override
     public void runCommand() {
-        ServerLogger.info("-Command List-");
+        ServerLogger.info("--- Showing help page 1 of 1 (/help) ---");
         for (String str:CommandHandler.commandMap.keySet())
             ServerLogger.info(str+" - "+CommandHandler.commandMap.get(str).commandUsage);
         super.runCommand();

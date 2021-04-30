@@ -3,6 +3,7 @@ package net.fap.beecloud;
 import cn.nukkit.network.protocol.DisconnectPacket;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.event.player.PlayerJoinEvent;
+import net.fap.beecloud.event.player.PlayerQuitEvent;
 import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
 import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
 
@@ -32,9 +33,8 @@ public class SynapsePlayer {
     public static void addPlayer(LoginPacket packet)
     {
         Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(),packet.address,packet.uuid,packet.clientID));
-        ServerLogger.info(packet.getPlayer()+"("+packet.address+") joined the game.");
-        PlayerJoinEvent event = new PlayerJoinEvent();
-        event.player = packet.getPlayer();
+        ServerLogger.info(packet.getPlayer()+"["+packet.address+"] joined the game.");
+        PlayerJoinEvent event = new PlayerJoinEvent(packet);
         event.call();
     }
 
@@ -42,6 +42,8 @@ public class SynapsePlayer {
     {
         Server.onLinePlayerList.remove(getPlayer(packet.getPlayer()));
         ServerLogger.info(packet.getPlayer()+" quited the game.");
+        PlayerQuitEvent event = new PlayerQuitEvent(packet);
+        event.call();
     }
 
     public static SynapsePlayer getPlayer(String player)

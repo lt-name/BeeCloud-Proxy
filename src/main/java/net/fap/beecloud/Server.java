@@ -3,18 +3,27 @@ package net.fap.beecloud;
 import cn.nukkit.network.protocol.DataPacket;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.console.simple.*;
-import net.fap.beecloud.event.BeeCloudEvent;
 import net.fap.beecloud.event.BeeCloudListener;
-import net.fap.beecloud.event.packet.DataPacketSendEvent;
+import net.fap.beecloud.event.Event;
+import net.fap.beecloud.event.EventHandler;
+import net.fap.beecloud.event.Listener;
+import net.fap.beecloud.event.player.PlayerJoinEvent;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
 import net.fap.beecloud.plugin.PluginLoader;
+import net.fap.beecloud.utils.Shutdown;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
 public class Server {
+
+    public static String ENCODING_UTF8 = "UTF-8";
+    public static String ENCODING_GBK = "GBK";
+    public static String ENCODING_GB2312 = "GB2312";
+
+    private static Server server;
 
     public int port1;
     public int port2;
@@ -25,8 +34,6 @@ public class Server {
     private File config = new File(this.getDataPath()+"/server.properties");
     private File pluginData = new File(this.getDataPath()+"/plugins");
     private File pluginList = new File(this.getDataPath()+"/pluginList.xml");
-
-    public BeeCloudEvent beeCloudEventListener;
 
     public static ArrayList<SynapsePlayer> onLinePlayerList = new ArrayList<>();
 
@@ -43,48 +50,58 @@ public class Server {
 
 
         ServerLogger.info("- BeeCloud Proxy Start -");
+
+        server = this;
+
         ServerLogger.waring("- Running your server on: "+this.port1+" -");
 
         CommandHandler.registerCommand(new HelpCommand());
         CommandHandler.registerCommand(new ListCommand());
         CommandHandler.registerCommand(new VersionCommand());
         CommandHandler.registerCommand(new PluginListCommand());
+        CommandHandler.registerCommand(new StopCommand());
 
-        this.beeCloudEventListener = new BeeCloudEvent();
-        this.beeCloudEventListener.registerListener(new BeeCloudListener());
+        EventHandler.setListener(new BeeCloudListener());
 
-        ServerLogger.info("- Start to load your plugin -");
-
+        ServerLogger.info("- Enabling plugins... -");
         PluginLoader.loadPlugin(this);
 
-        ServerLogger.info("- For help type /help");
+        Shutdown.shutdownTask();
 
+        ServerLogger.info("- Done! For help type /help");
 
         try {
-            new Thread(() -> {
-                try {
-                    receive();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        receive();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }).start();
-            new Thread(() -> {
-                try{
-                    while (true)
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        while (true)
+                        {
+                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                            String commandStr = null;
+                            while ((commandStr=br.readLine())!=null)
+                                CommandHandler.handleCommand(commandStr);
+                        }
+                    }catch (Exception e)
                     {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                        String commandStr;
-                        while ((commandStr=br.readLine())!=null)
-                            CommandHandler.handleCommand(commandStr);
+                        e.printStackTrace();
                     }
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-              }).start();
+                  }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void receive() throws IOException {
@@ -93,7 +110,8 @@ public class Server {
             byte[] bytes = new byte[1024];
             DatagramPacket dp = new DatagramPacket(bytes, bytes.length);
             ds.receive(dp);
-            String pk1 = new String(dp.getData(), 0, dp.getLength());
+            String pk1 = new String(dp.getData(), 0, dp.getLength(),ENCODING_UTF8);
+            //String pk2 = new String(pk1.getBytes(ENCODING_GBK), ENCODING_GBK);
             Packet.handlePacket(pk1);
         }
     }
@@ -101,12 +119,10 @@ public class Server {
     public void send(DataPacket dataPacket){
         try{
                 DatagramSocket ds = new DatagramSocket();
-                byte[] bytes = dataPacket.toString().getBytes();
+                byte[] bytes = dataPacket.toString().getBytes(ENCODING_UTF8);
                 InetAddress address =InetAddress.getByName("127.0.0.1");
                 DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
                 ds.send(dp);
-                DataPacketSendEvent event = new DataPacketSendEvent();
-                event.call();
                 ds.close();
         }catch (Exception e)
         {
@@ -114,9 +130,32 @@ public class Server {
         }
     }
 
+    public static Server getServer()
+    {
+        return server;
+    }
+
     public int getOnlinePlayerCount()
     {
         return onLinePlayerList.size();
+    }
+
+    public ArrayList<SynapsePlayer> getOnLinePlayer()
+    {
+        return onLinePlayerList;
+    }
+
+    public boolean isPlayerOnline(SynapsePlayer player)
+    {
+        return onLinePlayerList.contains(player);
+    }
+
+    public boolean isPlayerOnLine(String player)
+    {
+        for (SynapsePlayer pl : onLinePlayerList)
+            if (pl.player.equals(player))
+                return true;
+        return false;
     }
 
     public void send(BeeCloudPacket dataPacket)
@@ -124,7 +163,8 @@ public class Server {
         try{
             DatagramSocket ds = new DatagramSocket();
             dataPacket.resend();
-            byte[] bytes = dataPacket.to_String().getBytes();
+            String pk2 = new String(dataPacket.to_String().getBytes(ENCODING_UTF8), ENCODING_UTF8);
+            byte[] bytes = pk2.getBytes(ENCODING_UTF8);
             InetAddress address =InetAddress.getByName("127.0.0.1");
             DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
             ds.send(dp);
@@ -197,6 +237,5 @@ public class Server {
             e.printStackTrace();
         }
     }
-
 
 }

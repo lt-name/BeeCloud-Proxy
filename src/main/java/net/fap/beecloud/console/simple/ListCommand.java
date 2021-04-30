@@ -20,9 +20,10 @@ public class ListCommand extends CommandHandler{
 
     @Override
     public void runCommand() {
-        ServerLogger.info("Player Online("+Server.onLinePlayerList.size()+")");
+        String playerString = "";
         for (SynapsePlayer player: Server.onLinePlayerList)
-            System.out.println(player.player+" ");
+            playerString+=player.player+" ";
+        ServerLogger.info("Player Online("+Server.onLinePlayerList.size()+")\n"+playerString);
         super.runCommand();
     }
 

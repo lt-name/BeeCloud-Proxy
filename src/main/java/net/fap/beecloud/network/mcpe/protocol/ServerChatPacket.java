@@ -1,5 +1,7 @@
 package net.fap.beecloud.network.mcpe.protocol;
 
+import net.fap.beecloud.console.ServerLogger;
+
 /**
  * 服务器聊天数据包
  * 当玩家聊天时会触发这个数据包
@@ -19,7 +21,7 @@ public class ServerChatPacket extends BeeCloudPacket{
 
     @Override
     public void resend() {
-
+        ServerLogger.info("["+server+"] "+player+">> "+message);
     }
 
     @Override
