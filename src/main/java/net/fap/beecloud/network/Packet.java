@@ -5,6 +5,7 @@ import cn.nukkit.network.protocol.MovePlayerPacket;
 import net.fap.beecloud.BeeCloud;
 import net.fap.beecloud.SynapsePlayer;
 import net.fap.beecloud.console.ServerLogger;
+import net.fap.beecloud.event.server.DataPacketReceiveEvent;
 import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
 import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
 import net.fap.beecloud.network.mcpe.protocol.ServerChatPacket;
@@ -22,6 +23,8 @@ public class Packet {
                 LoginPacket pk3 = new LoginPacket();
                 pk3.putString(pk2);
                 BeeCloud.server.send(pk3);
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                event.call();
                 return;
             }
             else if (pk.contains("QuitPacket"))
@@ -30,17 +33,24 @@ public class Packet {
                 QuitPacket pk3 = new QuitPacket();
                 pk3.putString(pk2);
                 BeeCloud.server.send(pk3);
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                event.call();
                 return;
             }
             else if (pk.contains("ServerUpdatePacket"))
             {
-                BeeCloud.server.send(new ServerUpdatePacket());
+                ServerUpdatePacket packet = new ServerUpdatePacket();
+                BeeCloud.server.send(packet);
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(packet);
+                event.call();
             }else if (pk.contains("ServerChatPacket"))
             {
                 String[] pk2 = pk.split("\\:");
                 ServerChatPacket pk3 = new ServerChatPacket();
                 pk3.putString(pk2);
                 BeeCloud.server.send(pk3);
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                event.call();
             }
         }
         if (pk1 instanceof MovePlayerPacket)

@@ -1,13 +1,11 @@
 package net.fap.beecloud;
 
-import cn.nukkit.network.protocol.DisconnectPacket;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.event.player.PlayerJoinEvent;
 import net.fap.beecloud.event.player.PlayerQuitEvent;
 import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
 import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
-
-import java.util.UUID;
+import net.fap.beecloud.network.mcpe.protocol.custom.CustomPacket;
 
 /**
  * FillAmeaPixel Project
@@ -28,6 +26,72 @@ public class SynapsePlayer {
         this.clientID = clientID;
         this.player = player;
         this.address = address;
+    }
+
+    public String getName()
+    {
+        return this.player;
+    }
+
+    public String getAddress()
+    {
+        return this.address;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public String getClientUUid() {
+        return clientUUid;
+    }
+
+    public void sendMessage(String message)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"TextMessagePacket",this.getName(),message});
+        Server.getServer().send(packet);
+    }
+
+    public void sendTitle(String main, String sub,int fadein, int stay, int fadeout)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"TextTitlePacket",this.getName(),main+":"+sub+":"+fadein+":"+stay+":"+fadeout});
+        Server.getServer().send(packet);
+    }
+
+    public void sendTitle(String main, String sub)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"TextTitlePacket",this.getName(),main+":"+sub});
+        Server.getServer().send(packet);
+    }
+
+    public void sendTip(String message)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"TextTipPacket",this.getName(),message});
+        Server.getServer().send(packet);
+    }
+
+    public void kick(String reason)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"KickPlayerPacket",this.getName(),reason});
+        Server.getServer().send(packet);
+    }
+
+    public void kick()
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{"KickPlayerPacket",this.getName(),"Kicked by admin"});
+        Server.getServer().send(packet);
+    }
+
+    public void sendPacket(String packetName, String packetV)
+    {
+        CustomPacket packet = new CustomPacket();
+        packet.putString(new String[]{packetName,this.getName(),packetV});
     }
 
     public static void addPlayer(LoginPacket packet)

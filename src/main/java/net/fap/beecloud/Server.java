@@ -8,6 +8,7 @@ import net.fap.beecloud.event.Event;
 import net.fap.beecloud.event.EventHandler;
 import net.fap.beecloud.event.Listener;
 import net.fap.beecloud.event.player.PlayerJoinEvent;
+import net.fap.beecloud.event.server.DataPacketSendEvent;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
 import net.fap.beecloud.plugin.PluginBase;
@@ -157,6 +158,8 @@ public class Server {
             byte[] bytes = pk2.getBytes(ENCODING_UTF8);
             InetAddress address =InetAddress.getByName("127.0.0.1");
             DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
+            DataPacketSendEvent event = new DataPacketSendEvent(dataPacket);
+            event.call();
             ds.send(dp);
             ds.close();
         }catch (Exception e)
