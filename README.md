@@ -21,6 +21,12 @@ name:ExamplePlugin
 main:net.fap.beecloud.example.Main
 ```
 
+## 我是Nukkit开发者,怎么开发插件?
+将你的Nukkit插件依赖到BeeCloudNukkitAPI上
+并通过Synapse类的send方法发送数据包
+通过BeeCloudPacketEvent回收数据包
+进行服务器之间的通信
+
 ## 如何编写 BeeCloud-Proxy的插件?
 ### 主类继承PluginBase并implements PluginCase接口
 ```Java
