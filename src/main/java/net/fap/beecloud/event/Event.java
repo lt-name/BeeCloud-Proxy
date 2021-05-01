@@ -1,5 +1,8 @@
 package net.fap.beecloud.event;
 
+import net.fap.beecloud.Server;
+import net.fap.beecloud.plugin.RegisterListener;
+
 /**
  * 在服务器内可能发生的事情叫做事件
  *
@@ -25,6 +28,8 @@ public class Event {
     public void call()
     {
         EventHandler.getListener().call(this);
+        for (RegisterListener listener : Server.getServer().serverListeners)
+            listener.getListener().call(this);
     }
 
     public boolean isCancelled()

@@ -21,9 +21,9 @@ public class PluginListCommand extends CommandHandler {
     @Override
     public void runCommand() {
         String plugin = " ";
-        for (String str : PluginBase.pluginMap)
-            plugin+=str+" ";
-        ServerLogger.info("Plugins("+ PluginBase.pluginMap.size()+") "+plugin);
+        for (PluginBase pluginBase : PluginBase.pluginList)
+            plugin+=pluginBase.getName()+" ";
+        ServerLogger.info("Plugins("+ PluginBase.pluginList.size()+") "+plugin);
     }
 
 }

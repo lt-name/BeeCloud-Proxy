@@ -8,8 +8,15 @@ package net.fap.beecloud.plugin;
 
 public interface PluginCase {
 
+    /**
+     * 插件开启方法
+     */
     public void onEnable();
 
+
+    /**
+     * 插件加载方法
+     */
     public void onLoad();
 
 }

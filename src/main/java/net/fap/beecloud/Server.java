@@ -10,7 +10,9 @@ import net.fap.beecloud.event.Listener;
 import net.fap.beecloud.event.player.PlayerJoinEvent;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
+import net.fap.beecloud.plugin.PluginBase;
 import net.fap.beecloud.plugin.PluginLoader;
+import net.fap.beecloud.plugin.RegisterListener;
 import net.fap.beecloud.utils.Shutdown;
 
 import java.io.*;
@@ -32,10 +34,11 @@ public class Server {
 
     private String serverPath = String.valueOf(System.getProperty("user.dir"));
     private File config = new File(this.getDataPath()+"/server.properties");
-    private File pluginData = new File(this.getDataPath()+"/plugins");
-    private File pluginList = new File(this.getDataPath()+"/pluginList.xml");
+    private File pluginData = new File(this.getDataPath()+"/plugins/");
 
     public static ArrayList<SynapsePlayer> onLinePlayerList = new ArrayList<>();
+
+    public ArrayList<RegisterListener> serverListeners = new ArrayList<>();
 
     public Server()
     {
@@ -104,6 +107,16 @@ public class Server {
 
     }
 
+    public void registerListeners(PluginBase plugin, Listener listener)
+    {
+        RegisterListener registerListener = new RegisterListener(plugin,listener);
+    }
+
+    public void reloadListener(Listener listener)
+    {
+        EventHandler.setListener(listener);
+    }
+
     private void receive() throws IOException {
         DatagramSocket ds = new DatagramSocket(port1);
         while (true) {
@@ -128,6 +141,33 @@ public class Server {
         {
             e.printStackTrace();
         }
+    }
+
+    public String getName()
+    {
+        return "BeeCloud";
+    }
+
+    public void send(BeeCloudPacket dataPacket)
+    {
+        try{
+            DatagramSocket ds = new DatagramSocket();
+            dataPacket.resend();
+            String pk2 = new String(dataPacket.to_String().getBytes(ENCODING_UTF8), ENCODING_UTF8);
+            byte[] bytes = pk2.getBytes(ENCODING_UTF8);
+            InetAddress address =InetAddress.getByName("127.0.0.1");
+            DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
+            ds.send(dp);
+            ds.close();
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void registerCommand(CommandHandler commandHandler)
+    {
+        CommandHandler.registerCommand(commandHandler);
     }
 
     public static Server getServer()
@@ -158,23 +198,6 @@ public class Server {
         return false;
     }
 
-    public void send(BeeCloudPacket dataPacket)
-    {
-        try{
-            DatagramSocket ds = new DatagramSocket();
-            dataPacket.resend();
-            String pk2 = new String(dataPacket.to_String().getBytes(ENCODING_UTF8), ENCODING_UTF8);
-            byte[] bytes = pk2.getBytes(ENCODING_UTF8);
-            InetAddress address =InetAddress.getByName("127.0.0.1");
-            DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
-            ds.send(dp);
-            ds.close();
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     private void createConfig()
     {
         if (!config.exists())
@@ -184,23 +207,6 @@ public class Server {
             writeData(config,"server-ip=0.0.0.0");
             writeData(config,"synapse-password=123456789");
         }
-        if (!pluginList.exists())
-        {
-            writeData(pluginList,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                    "<plugins>\n" +
-                    "    <!--- <test pattern=\"例子\" />\n" +
-                    "    添加插件的例子\n" +
-                    "      <plugin>\n" +
-                    "        <name>BeeCloud实例插件</name>\n" +
-                    "        <jar>BeeCloud/plugins/Demo.jar</jar>\n" +
-                    "        <class>net.fap.proxy.demo.Main</class>\n" +
-                    "    </plugin>\n" +
-                    "    name是插件的名字\n" +
-                    "    jar是插件的路径\n" +
-                    "    class是插件主类的位置\n" +
-                    "    <test pattern=\"NTSC\" /> -->\n" +
-                    "</plugins>");
-        }
     }
 
     public String getDataPath()
@@ -208,7 +214,17 @@ public class Server {
         return this.serverPath;
     }
 
-    public String getConfigValue(String index)
+    public String getPluginData()
+    {
+        return this.pluginData.getPath();
+    }
+
+    public File getPluginFile()
+    {
+        return this.pluginData;
+    }
+
+    private String getConfigValue(String index)
     {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(this.getDataPath()+"\\server.properties")));

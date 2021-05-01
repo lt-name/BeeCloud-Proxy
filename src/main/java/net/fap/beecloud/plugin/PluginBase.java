@@ -1,16 +1,30 @@
 package net.fap.beecloud.plugin;
 
+import net.fap.beecloud.Server;
+
 import java.util.ArrayList;
 
 public class PluginBase {
 
-    public static ArrayList<String> pluginMap = new ArrayList<>();
+    public static ArrayList<PluginBase> pluginList = new ArrayList<>();
 
     private String name;
 
     private String jar;
 
     private String className;
+
+    private PluginLogger pluginLogger;
+
+    public Server getServer()
+    {
+        return Server.getServer();
+    }
+
+    public PluginLogger getLogger()
+    {
+        return this.pluginLogger;
+    }
 
     public void setClassName(String className) {
         this.className = className;
@@ -24,6 +38,11 @@ public class PluginBase {
         this.name = name;
     }
 
+    public void setPluginLogger(PluginLogger logger)
+    {
+        this.pluginLogger = logger;
+    }
+
     public String getJar() {
         return jar;
     }
@@ -35,4 +54,5 @@ public class PluginBase {
     public String getName() {
         return name;
     }
+
 }

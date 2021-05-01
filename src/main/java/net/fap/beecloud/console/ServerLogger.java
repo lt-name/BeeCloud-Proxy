@@ -19,7 +19,7 @@ public class ServerLogger {
         System.out.println(getTime()+ "[WARING] "+message);
     }
 
-    private static String getTime()
+    public static String getTime()
     {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
