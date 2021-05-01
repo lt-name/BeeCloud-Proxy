@@ -1,44 +1,44 @@
 # BeeCloud Proxy
 
-BeeCloud Minecraft Bedrock Edition proxy server software with UDP protocol.
+基于UDP协议的Minecraft基岩版Nukkit服务器群组软件
 
-[简体中文](README_zh.md)
+[English](README.md)
 
-## How to use? 
-Download the proxy file and use "java -jar beecloud(fileName).jar"
-to run the proxy.Download BeeCloudAPI plugin and put it into your server.
+## 怎么使用
+下载服务端并使用命令 "java -jar beecloud(文件名).jar"
+去运行它并安装BeeCloudAPI到所有Nukkit子服务器上面
 
 Java CI: http://bbs.fapixel.com:8080
-Download BeeCloudAPI: https://github.com/rainbow188/BeeCloudNukkitAPI
+下载 BeeCloudAPI: https://github.com/rainbow188/BeeCloudNukkitAPI
 
-### Implement functions
+### 实现功能
 
-- The number of multiple Nukkit servers is synchronized.
-- Develop BeeCloud Proxy's own plug-in.
-- A plurality of Nukkit servers send DataPacket to each other and carry out string communication.
+- 群组服务器人数同步
+- 开放的开发环境，可以为BeeCloud自创扩展插件
+- 多个Nukkit服务器之间相互发送数据包并进行字符串通信
 
-### How to use BeeCloud plugins?
+### 怎么使用 BeeCloud 的插件?
 
-- put all plugins into BeeCloud/plugins/ and run your proxy server.
-- Make sure that your plugin has a plugin.yml file in your first packege folder but not src folder.
+- 放所有插件到 BeeCloud/plugins/ 并运行你的服务器
+- 确保你的插件的主包下有plugin.yml而不是在src目录下
 ```
 name:ExamplePlugin
 main:net.fap.beecloud.example.Main
 ```
 
-## For developer
+## 对于开发者
 
-### Plugin for Nukkit
-Depend your Nukkit plugins on BeeCloudAPI and
-use Event Listener (@BeeCloudPacketEvent) to send packet
-and get back the packet.
+### 开发Nukkit插件
+将你的插件依赖到 BeeCloudAPI 并
+使用监听器 (@BeeCloudPacketEvent) 去发送
+和接收数据包
 
-### Plugin for BeeCloud Proxy
+### 开发 BeeCloud Proxy 插件
 
-#### Example Main class
-Extends your main class with PluginBase
-and implements PluginCase
-Use function:
+#### 主类例子
+继承到 PluginBase
+并 implements PluginCase
+使用函数:
 - public void onLoad();
 - public void onEnable();
 ```java
@@ -108,9 +108,9 @@ public class Main extends PluginBase implements PluginCase {
 }
 ```
 
-#### Custom Command
-Extends your class with CommandHandler
-And register it by "Server.getServer.register(CommandHandler);"
+#### 自定义命令
+继承类到 CommandHandler
+并使用 "Server.getServer.register(CommandHandler);" 注册命令
 ```java
 package net.fap.beecloud.example;
 
@@ -145,7 +145,7 @@ public class MyCommand extends CommandHandler {
 }
 ```
 
-#### Custom Listener
+#### 自定义监听器
 ```java
 package net.fap.beecloud.example;
 
