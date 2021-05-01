@@ -14,13 +14,11 @@ import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
 import net.fap.beecloud.plugin.PluginBase;
 import net.fap.beecloud.plugin.PluginLoader;
 import net.fap.beecloud.plugin.RegisterListener;
-import net.fap.beecloud.scheduler.Scheduler;
 import net.fap.beecloud.utils.Shutdown;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Server {
 
@@ -34,7 +32,6 @@ public class Server {
     public int port2;
 
     public String clientPassword;
-    public final Scheduler scheduler = new Scheduler();
 
     private String serverPath = String.valueOf(System.getProperty("user.dir"));
     private File config = new File(this.getDataPath()+"/server.properties");
@@ -94,8 +91,10 @@ public class Server {
                     try{
                         while (true)
                         {
-                            Scanner scanner = new Scanner(System.in);
-                            CommandHandler.handleCommand(scanner.next());
+                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                            String commandStr = null;
+                            while ((commandStr=br.readLine())!=null)
+                                CommandHandler.handleCommand(commandStr);
                         }
                     }catch (Exception e)
                     {
@@ -106,14 +105,7 @@ public class Server {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        while (true){
-            scheduler.heartbeat();
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     public void registerListeners(PluginBase plugin, Listener listener)
@@ -238,7 +230,7 @@ public class Server {
     private String getConfigValue(String index)
     {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(this.getDataPath()+File.separator+"server.properties")));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(this.getDataPath()+"\\server.properties")));
             String lineData = null;
             while ((lineData = br.readLine()) != null) {
                 String[] str1 = lineData.split("\\=");
