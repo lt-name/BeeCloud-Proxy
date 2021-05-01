@@ -34,7 +34,7 @@ main:net.fap.beecloud.example.Main
 和接收数据包
 
 ### 开发 BeeCloud Proxy 插件
-
+例子插件: https://github.com/rainbow188/ExamplePlugin
 #### 主类例子
 继承到 PluginBase
 并 implements PluginCase

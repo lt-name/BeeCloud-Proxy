@@ -34,7 +34,7 @@ use Event Listener (@BeeCloudPacketEvent) to send packet
 and get back the packet.
 
 ### Plugin for BeeCloud Proxy
-
+ExamlplePlugin: https://github.com/rainbow188/ExamplePlugin
 #### Example Main class
 Extends your main class with PluginBase
 and implements PluginCase
