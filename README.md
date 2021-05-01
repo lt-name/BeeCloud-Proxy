@@ -23,7 +23,7 @@ main:net.fap.beecloud.example.Main
 
 ## 如何编写 BeeCloud-Proxy的插件?
 ### 主类继承PluginBase并implements PluginCase接口
-```
+```Java
 package net.fap.beecloud.example;
 
 import net.fap.beecloud.Server;
@@ -92,7 +92,7 @@ public class Main extends PluginBase implements PluginCase {
 
 ### 自定义命令
 将命令继承到CommandHandler并通过Server.registerCommand(CommandHandler);进行注册
-```
+```Java
 package net.fap.beecloud.example;
 
 import net.fap.beecloud.console.ServerLogger;
@@ -126,7 +126,7 @@ public class MyCommand extends CommandHandler {
 }
 ```
 ### 自定义监听器
-```
+```Java
 package net.fap.beecloud.example;
 
 import net.fap.beecloud.console.ServerLogger;
