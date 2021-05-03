@@ -19,12 +19,15 @@ public class ListCommand extends CommandHandler{
     }
 
     @Override
-    public void runCommand() {
-        String playerString = "";
-        for (SynapsePlayer player: Server.onLinePlayerList)
-            playerString+=player.player+" ";
-        ServerLogger.info("Player Online("+Server.onLinePlayerList.size()+")\n"+playerString);
-        super.runCommand();
+    public void runCommand(String args[]) {
+        if (args.length==1)
+        {
+            String playerString = "";
+            for (SynapsePlayer player: Server.onLinePlayerList)
+                playerString+=player.player+" ";
+            ServerLogger.info("Player Online("+Server.onLinePlayerList.size()+")\n"+playerString);
+        }else ServerLogger.info("Usage: "+commandUsage);
+        super.runCommand(args);
     }
 
 }

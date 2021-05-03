@@ -1,5 +1,8 @@
 package net.fap.beecloud.console;
 
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,12 +14,16 @@ public class ServerLogger {
 
     public static void info(String message)
     {
-        System.out.println(getTime()+"[INFO] "+message);
+        AnsiConsole.systemInstall();
+        System.out.println(""+Ansi.ansi().fg(Ansi.Color.BLUE).a(getTime()).reset()+Ansi.ansi().fg(Ansi.Color.YELLOW).a("[INFO]").reset()+Ansi.ansi().fg(Ansi.Color.DEFAULT).a(message));
+        AnsiConsole.systemUninstall();
     }
 
     public static void waring(String message)
     {
-        System.out.println(getTime()+ "[WARING] "+message);
+        AnsiConsole.systemInstall();
+        System.out.println(""+Ansi.ansi().fg(Ansi.Color.BLUE).a(getTime()).reset()+Ansi.ansi().fg(Ansi.Color.RED).a("[WARING]").reset()+Ansi.ansi().fg(Ansi.Color.DEFAULT).a(message));
+        AnsiConsole.systemUninstall();
     }
 
     public static String getTime()

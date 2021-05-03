@@ -5,6 +5,7 @@ import net.fap.beecloud.event.player.PlayerJoinEvent;
 import net.fap.beecloud.event.player.PlayerQuitEvent;
 import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
 import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
+import net.fap.beecloud.network.mcpe.protocol.TransferPacket;
 import net.fap.beecloud.network.mcpe.protocol.custom.CustomPacket;
 
 /**
@@ -19,13 +20,15 @@ public class SynapsePlayer {
     public String clientID;
     public String player;
     public String address;;
+    public String serverName;
 
-    public SynapsePlayer(String player, String address, String clientUUId, String clientID)
+    public SynapsePlayer(String player, String address, String clientUUId, String clientID, String serverName)
     {
         this.clientUUid = clientUUId;
         this.clientID = clientID;
         this.player = player;
         this.address = address;
+        this.serverName = serverName;
     }
 
     public String getName()
@@ -51,6 +54,11 @@ public class SynapsePlayer {
         CustomPacket packet = new CustomPacket();
         packet.putString(new String[]{"TextMessagePacket",this.getName(),message});
         Server.getServer().send(packet);
+    }
+
+    public String getServerName()
+    {
+        return this.serverName;
     }
 
     public void sendTitle(String main, String sub,int fadein, int stay, int fadeout)
@@ -96,27 +104,35 @@ public class SynapsePlayer {
 
     public static void addPlayer(LoginPacket packet)
     {
-        Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(),packet.address,packet.uuid,packet.clientID));
-        ServerLogger.info(packet.getPlayer()+"["+packet.address+"] joined the game.");
         PlayerJoinEvent event = new PlayerJoinEvent(packet);
         event.call();
+        if (!event.isCancelled()) {
+            Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(), packet.address, packet.uuid, packet.clientID,packet.serverName));
+            ServerLogger.info(packet.getPlayer() + "[" + packet.address + "] joined the game.");
+            Client.getClient(packet.serverName).addPlayer(SynapsePlayer.getPlayer(packet.getPlayer()));
+        }else getPlayer(packet.getPlayer()).kick("§cLogin out of the synapse server");
     }
 
     public static void removePlayer(QuitPacket packet)
     {
+        Client.getClient(SynapsePlayer.getPlayer(packet.getPlayer()).serverName).removePlayer(SynapsePlayer.getPlayer(packet.getPlayer()));
         Server.onLinePlayerList.remove(getPlayer(packet.getPlayer()));
         ServerLogger.info(packet.getPlayer()+" quited the game.");
         PlayerQuitEvent event = new PlayerQuitEvent(packet);
         event.call();
     }
 
-    public static SynapsePlayer getPlayer(String player)
-    {
-        for (int i=0; i<Server.onLinePlayerList.size(); i++)
+    public static SynapsePlayer getPlayer(String player) {
+        for (int i = 0; i < Server.onLinePlayerList.size(); i++)
             if (Server.onLinePlayerList.get(i).player.equals(player))
                 return Server.onLinePlayerList.get(i);
-            return null;
+        return null;
     }
 
+    public void transferPlayer(Client client)
+    {
+        TransferPacket packet = new TransferPacket(this,client);
+        Server.getServer().send(packet);
+    }
 
 }

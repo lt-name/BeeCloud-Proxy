@@ -14,14 +14,40 @@ public class ServerChatPacket extends BeeCloudPacket{
     public String message;
     public String player;
     public String server;
+    private String messageAll;
+
+    public ServerChatPacket(String player, String server, String message)
+    {
+        this.player = player;
+        this.server = server;
+        this.message = message;
+        messageAll = "§8["+server+"]§r"+player+"§8>>§r"+this.message;
+    }
 
     public String getPlayer() {
         return player;
     }
 
+    public String getMessageAll() {
+        return messageAll;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessageAll(String message)
+    {
+        this.messageAll = message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public void resend() {
-        ServerLogger.info("["+server+"] "+player+">> "+message);
+        ServerLogger.info(messageAll);
     }
 
     @Override
@@ -33,7 +59,7 @@ public class ServerChatPacket extends BeeCloudPacket{
 
     @Override
     public String to_String() {
-        return "ServerChatPacket:§8["+server+"]§r"+player+"§8>>§r"+message;
+        return "ServerChatPacket:"+messageAll;
     }
 
 }

@@ -4,21 +4,27 @@ import cn.nukkit.network.protocol.DataPacket;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.console.simple.*;
 import net.fap.beecloud.event.BeeCloudListener;
-import net.fap.beecloud.event.Event;
 import net.fap.beecloud.event.EventHandler;
 import net.fap.beecloud.event.Listener;
-import net.fap.beecloud.event.player.PlayerJoinEvent;
 import net.fap.beecloud.event.server.DataPacketSendEvent;
+import net.fap.beecloud.math.BeeCloudMath;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
 import net.fap.beecloud.plugin.PluginBase;
 import net.fap.beecloud.plugin.PluginLoader;
 import net.fap.beecloud.plugin.RegisterListener;
+import net.fap.beecloud.scheduler.Scheduler;
 import net.fap.beecloud.utils.Shutdown;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+
+/**
+ * FillAmraPixel Project
+ *
+ * @author catrainbow
+ */
 
 public class Server {
 
@@ -41,6 +47,8 @@ public class Server {
 
     public ArrayList<RegisterListener> serverListeners = new ArrayList<>();
 
+    private Scheduler serverScheduler;
+
     public Server()
     {
         createConfig();
@@ -53,9 +61,10 @@ public class Server {
     public void init() {
 
 
-        ServerLogger.info("- BeeCloud Proxy Start -");
+        ServerLogger.info("-- BeeCloud Proxy --");
 
         server = this;
+        serverScheduler = new Scheduler();
 
         ServerLogger.waring("- Running your server on: "+this.port1+" -");
 
@@ -79,6 +88,7 @@ public class Server {
                 @Override
                 public void run() {
                     try {
+                        titleTick();
                         receive();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -152,16 +162,19 @@ public class Server {
     public void send(BeeCloudPacket dataPacket)
     {
         try{
-            DatagramSocket ds = new DatagramSocket();
-            dataPacket.resend();
-            String pk2 = new String(dataPacket.to_String().getBytes(ENCODING_UTF8), ENCODING_UTF8);
-            byte[] bytes = pk2.getBytes(ENCODING_UTF8);
-            InetAddress address =InetAddress.getByName("127.0.0.1");
-            DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
             DataPacketSendEvent event = new DataPacketSendEvent(dataPacket);
             event.call();
-            ds.send(dp);
-            ds.close();
+            if (!event.isCancelled())
+            {
+                DatagramSocket ds = new DatagramSocket();
+                dataPacket.resend();
+                String pk2 = new String(dataPacket.to_String().getBytes(ENCODING_UTF8), ENCODING_UTF8);
+                byte[] bytes = pk2.getBytes(ENCODING_UTF8);
+                InetAddress address =InetAddress.getByName("127.0.0.1");
+                DatagramPacket dp = new DatagramPacket(bytes,bytes.length,address,port2);
+                ds.send(dp);
+                ds.close();
+            }
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -176,6 +189,16 @@ public class Server {
     public static Server getServer()
     {
         return server;
+    }
+
+    public Client getClient(String server)
+    {
+        return Client.getClient(server);
+    }
+
+    public Scheduler getServerScheduler()
+    {
+        return this.serverScheduler;
     }
 
     public int getOnlinePlayerCount()
@@ -227,6 +250,13 @@ public class Server {
         return this.pluginData;
     }
 
+    public void broadcastMessage(String message)
+    {
+        for (SynapsePlayer player:this.getOnLinePlayer())
+            player.sendMessage(message);
+        ServerLogger.info(message);
+    }
+
     private String getConfigValue(String index)
     {
         try {
@@ -255,6 +285,15 @@ public class Server {
         {
             e.printStackTrace();
         }
+    }
+
+    private void titleTick()
+    {
+        Runtime runtime = Runtime.getRuntime();
+        double used = BeeCloudMath.round((double)(runtime.totalMemory()-runtime.freeMemory())/1024/1024,2);
+        double max = BeeCloudMath.round((double)runtime.maxMemory() / 1024.0D / 1024.0D, 2);
+        String usage = Math.round(used / max * 100.0D) + "%";
+        String title = this.getName()+" - Memory:"+used+"/"+max+"("+usage+")";
     }
 
 }

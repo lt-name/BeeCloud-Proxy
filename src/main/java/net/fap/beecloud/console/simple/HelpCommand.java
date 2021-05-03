@@ -17,10 +17,18 @@ public class HelpCommand extends CommandHandler {
     }
 
     @Override
-    public void runCommand() {
-        ServerLogger.info("--- Showing help page 1 of 1 (/help) ---");
-        for (String str:CommandHandler.commandMap.keySet())
-            ServerLogger.info(str+" - "+CommandHandler.commandMap.get(str).commandUsage);
-        super.runCommand();
+    public void runCommand(String args[]) {
+        if (args.length==1)
+        {
+            ServerLogger.info("--- Showing help page 1 of 1 (/help) ---");
+            for (String str:CommandHandler.commandMap.keySet())
+                ServerLogger.info(str+" - "+CommandHandler.commandMap.get(str).commandUsage);
+        }else if (args.length==2)
+        {
+            if (CommandHandler.commandMap.get(args[1]).commandStr.equals(args[1]))
+                ServerLogger.info("Command: "+args[1] +" | Usage: "+CommandHandler.commandMap.get(args[1]).commandUsage);
+            else ServerLogger.info("Usage: /help or /help <command>");
+        }
+        super.runCommand(args);
     }
 }

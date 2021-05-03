@@ -19,6 +19,8 @@ public class LoginPacket extends BeeCloudPacket{
 
     public String clientID;
 
+    public String serverName;
+
     @Override
     public void putString(String[] pk2)
     {
@@ -26,6 +28,7 @@ public class LoginPacket extends BeeCloudPacket{
         this.address = pk2[2];
         this.uuid = pk2[3];
         this.clientID = pk2[4];
+        this.serverName = pk2[5];
     }
 
     public String getPlayer()
@@ -40,6 +43,6 @@ public class LoginPacket extends BeeCloudPacket{
 
     @Override
     public String to_String() {
-        return "LoginPacket:"+player+":"+address+":"+uuid+":"+clientID;
+        return "LoginPacket:"+player+":"+address+":"+uuid+":"+clientID+":"+serverName;
     }
 }

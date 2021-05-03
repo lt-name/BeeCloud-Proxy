@@ -6,10 +6,7 @@ import net.fap.beecloud.BeeCloud;
 import net.fap.beecloud.SynapsePlayer;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.event.server.DataPacketReceiveEvent;
-import net.fap.beecloud.network.mcpe.protocol.LoginPacket;
-import net.fap.beecloud.network.mcpe.protocol.QuitPacket;
-import net.fap.beecloud.network.mcpe.protocol.ServerChatPacket;
-import net.fap.beecloud.network.mcpe.protocol.ServerUpdatePacket;
+import net.fap.beecloud.network.mcpe.protocol.*;
 
 public class Packet {
 
@@ -46,8 +43,15 @@ public class Packet {
             }else if (pk.contains("ServerChatPacket"))
             {
                 String[] pk2 = pk.split("\\:");
-                ServerChatPacket pk3 = new ServerChatPacket();
+                ServerChatPacket pk3 = new ServerChatPacket(pk2[2],pk2[1],pk2[3]);
                 pk3.putString(pk2);
+                BeeCloud.server.send(pk3);
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                event.call();
+            }else if (pk.contains("ConnectPacket"))
+            {
+                String[] pk2 = pk.split("\\:");
+                ConnectPacket pk3 = new ConnectPacket(pk2[2],pk2[1],pk2[3],pk2[4],pk2[5]);
                 BeeCloud.server.send(pk3);
                 DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
                 event.call();

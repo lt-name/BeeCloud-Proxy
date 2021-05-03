@@ -2,6 +2,7 @@ package net.fap.beecloud.console.simple;
 
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.plugin.PluginBase;
+import org.fusesource.jansi.Ansi;
 
 public class PluginListCommand extends CommandHandler {
 
@@ -19,11 +20,14 @@ public class PluginListCommand extends CommandHandler {
     }
 
     @Override
-    public void runCommand() {
-        String plugin = " ";
-        for (PluginBase pluginBase : PluginBase.pluginList)
-            plugin+=pluginBase.getName()+" ";
-        ServerLogger.info("Plugins("+ PluginBase.pluginList.size()+") "+plugin);
+    public void runCommand(String args[]) {
+        if (args.length==1)
+        {
+            String plugin = " ";
+            for (PluginBase pluginBase : PluginBase.pluginList)
+                plugin+=pluginBase.getName()+" ";
+            ServerLogger.info("Plugins("+ PluginBase.pluginList.size()+") "+ Ansi.ansi().fg(Ansi.Color.GREEN).a(plugin).reset());
+        }else ServerLogger.info("Usage: "+commandUsage);
     }
 
 }

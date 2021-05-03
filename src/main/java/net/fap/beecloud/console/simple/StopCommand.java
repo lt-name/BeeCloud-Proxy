@@ -1,5 +1,7 @@
 package net.fap.beecloud.console.simple;
 
+import net.fap.beecloud.console.ServerLogger;
+
 public class StopCommand extends CommandHandler{
 
     public String commandStr = "stop";
@@ -15,9 +17,11 @@ public class StopCommand extends CommandHandler{
     }
 
     @Override
-    public void runCommand() {
-        System.exit(0);
-        super.runCommand();
+    public void runCommand(String args[]) {
+        if (args.length==1)
+            System.exit(0);
+        else ServerLogger.info("Usage: "+commandUsage);
+        super.runCommand(args);
     }
 
 }

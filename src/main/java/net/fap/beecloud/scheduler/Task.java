@@ -1,7 +1,12 @@
 package net.fap.beecloud.scheduler;
 
-public abstract class Task implements Runnable {
+import java.util.TimerTask;
 
+public class Task extends TimerTask {
 
+    @Override
+    public void run() {
+
+    }
 
 }

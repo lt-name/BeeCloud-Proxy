@@ -18,7 +18,9 @@ public class VersionCommand extends CommandHandler {
     }
 
     @Override
-    public void runCommand() {
-        ServerLogger.info("此服务器正运行在BeeCloud-Proxy上. Build: BetaVersion 0.0.1");
+    public void runCommand(String args[]) {
+        if (args.length==1)
+            ServerLogger.info("此服务器正运行在BeeCloud-Proxy上. Build: BetaVersion 0.0.1");
+        else ServerLogger.info("Usage: "+commandUsage);
     }
 }

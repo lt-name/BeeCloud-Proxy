@@ -16,8 +16,8 @@ public class CommandHandler {
 	}
 
 	public static void handleCommand(String commandStr) {
-		if (commandStr.length() > 0 && commandMap.containsKey(commandStr)) {
-			commandMap.get(commandStr).runCommand();
+		if (commandStr.length() > 0 && commandMap.containsKey(commandStr.split("\\s+")[0])) {
+			commandMap.get(commandStr.split("\\s+")[0]).runCommand(commandStr.split("\\s+"));
 		} else ServerLogger.info("Unknown command! type help for help.");
 	}
 
@@ -26,7 +26,7 @@ public class CommandHandler {
 		this.commandUsage = commandUsage;
 	}
 
-	public void runCommand() {
+	public void runCommand(String[] args) {
 
 	}
 
