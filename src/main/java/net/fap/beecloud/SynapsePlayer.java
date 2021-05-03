@@ -106,8 +106,8 @@ public class SynapsePlayer {
     {
         PlayerJoinEvent event = new PlayerJoinEvent(packet);
         event.call();
+        Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(), packet.address, packet.uuid, packet.clientID,packet.serverName));
         if (!event.isCancelled()) {
-            Server.onLinePlayerList.add(new SynapsePlayer(packet.getPlayer(), packet.address, packet.uuid, packet.clientID,packet.serverName));
             ServerLogger.info(packet.getPlayer() + "[" + packet.address + "] joined the game.");
             Client.getClient(packet.serverName).addPlayer(SynapsePlayer.getPlayer(packet.getPlayer()));
         }else getPlayer(packet.getPlayer()).kick("§cLogin out of the synapse server");

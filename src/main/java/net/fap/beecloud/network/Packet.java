@@ -5,8 +5,10 @@ import cn.nukkit.network.protocol.MovePlayerPacket;
 import net.fap.beecloud.BeeCloud;
 import net.fap.beecloud.SynapsePlayer;
 import net.fap.beecloud.console.ServerLogger;
+import net.fap.beecloud.event.player.PlayerCommandEvent;
 import net.fap.beecloud.event.server.DataPacketReceiveEvent;
 import net.fap.beecloud.network.mcpe.protocol.*;
+import net.fap.beecloud.network.mcpe.protocol.custom.CustomPacket;
 
 public class Packet {
 
@@ -23,8 +25,7 @@ public class Packet {
                 DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
                 event.call();
                 return;
-            }
-            else if (pk.contains("QuitPacket"))
+            } else if (pk.contains("QuitPacket"))
             {
                 String[] pk2 = pk.split("\\:");
                 QuitPacket pk3 = new QuitPacket();
@@ -55,6 +56,31 @@ public class Packet {
                 BeeCloud.server.send(pk3);
                 DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
                 event.call();
+            }else if (pk.contains("CommandPacket"))
+            {
+                String[] pk2 = pk.split("\\:");
+                String commandMessage = pk2[2];
+                String commandSender = pk2[1];
+                commandMessage = commandMessage.replace("/","");
+                String commandArgs[] = commandMessage.split("\\s+");
+                PlayerCommandEvent commandEvent = new PlayerCommandEvent(SynapsePlayer.getPlayer(commandSender),commandArgs[0],commandMessage);
+                commandEvent.call();
+                if (!commandEvent.isCancelled())
+                {
+                    CommandPacket pk3 = new CommandPacket(commandMessage,commandSender,commandArgs);
+                    BeeCloud.server.send(pk3);
+                    DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                    event.call();
+                }
+            }else{
+                CustomPacket pk3 = new CustomPacket();
+                String[] pk2 = pk.split("\\:",3);
+                pk3.packetName = pk2[0];
+                pk3.player = pk2[1];
+                pk3.message = pk2[2];
+                DataPacketReceiveEvent event = new DataPacketReceiveEvent(pk3);
+                event.call();
+                BeeCloud.server.send(pk3);
             }
         }
         if (pk1 instanceof MovePlayerPacket)

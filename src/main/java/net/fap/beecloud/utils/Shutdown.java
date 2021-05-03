@@ -1,6 +1,8 @@
 package net.fap.beecloud.utils;
 
 import net.fap.beecloud.BeeCloud;
+import net.fap.beecloud.Server;
+import net.fap.beecloud.SynapsePlayer;
 import net.fap.beecloud.console.ServerLogger;
 import net.fap.beecloud.network.mcpe.protocol.DisconnectPacket;
 import net.fap.beecloud.plugin.PluginBase;
@@ -22,6 +24,8 @@ public class Shutdown {
             @Override
             public void run() {
                 ServerLogger.info("- Disabling plugins... -");
+                for (SynapsePlayer player: Server.getServer().getOnLinePlayer())
+                    ServerLogger.info(player.getName()+" quited the game. Reason: SynapseServer Closed");
                 for (PluginBase plugin : PluginBase.pluginList)
                     ServerLogger.info("关闭插件: "+plugin.getName());
                 DisconnectPacket packet = new DisconnectPacket();

@@ -17,7 +17,7 @@ public class HelpCommand extends CommandHandler {
     }
 
     @Override
-    public void runCommand(String args[]) {
+    public void runCommand(String args[], String commandSender) {
         if (args.length==1)
         {
             ServerLogger.info("--- Showing help page 1 of 1 (/help) ---");
@@ -29,6 +29,6 @@ public class HelpCommand extends CommandHandler {
                 ServerLogger.info("Command: "+args[1] +" | Usage: "+CommandHandler.commandMap.get(args[1]).commandUsage);
             else ServerLogger.info("Usage: /help or /help <command>");
         }
-        super.runCommand(args);
+        super.runCommand(args,commandSender);
     }
 }

@@ -19,7 +19,7 @@ public class ListCommand extends CommandHandler{
     }
 
     @Override
-    public void runCommand(String args[]) {
+    public void runCommand(String args[],String commandSender) {
         if (args.length==1)
         {
             String playerString = "";
@@ -27,7 +27,7 @@ public class ListCommand extends CommandHandler{
                 playerString+=player.player+" ";
             ServerLogger.info("Player Online("+Server.onLinePlayerList.size()+")\n"+playerString);
         }else ServerLogger.info("Usage: "+commandUsage);
-        super.runCommand(args);
+        super.runCommand(args,commandSender);
     }
 
 }

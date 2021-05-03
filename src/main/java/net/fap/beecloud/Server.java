@@ -10,6 +10,7 @@ import net.fap.beecloud.event.server.DataPacketSendEvent;
 import net.fap.beecloud.math.BeeCloudMath;
 import net.fap.beecloud.network.Packet;
 import net.fap.beecloud.network.mcpe.protocol.BeeCloudPacket;
+import net.fap.beecloud.network.mcpe.protocol.CommandRegisterPacket;
 import net.fap.beecloud.plugin.PluginBase;
 import net.fap.beecloud.plugin.PluginLoader;
 import net.fap.beecloud.plugin.RegisterListener;
@@ -104,7 +105,7 @@ public class Server {
                             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                             String commandStr = null;
                             while ((commandStr=br.readLine())!=null)
-                                CommandHandler.handleCommand(commandStr);
+                                CommandHandler.handleCommand(commandStr,"CONSOLE");
                         }
                     }catch (Exception e)
                     {
@@ -184,6 +185,14 @@ public class Server {
     public void registerCommand(CommandHandler commandHandler)
     {
         CommandHandler.registerCommand(commandHandler);
+    }
+
+    public void registerNukkitCommand(CommandHandler commandHandler)
+    {
+        CommandHandler.registerCommand(commandHandler);
+        CommandRegisterPacket pk = new CommandRegisterPacket(commandHandler.commandStr,commandHandler.commandUsage);
+        CommandHandler.customCommandPacketList.add(pk);
+        send(pk);
     }
 
     public static Server getServer()

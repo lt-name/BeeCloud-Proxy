@@ -17,11 +17,11 @@ public class StopCommand extends CommandHandler{
     }
 
     @Override
-    public void runCommand(String args[]) {
+    public void runCommand(String args[],String commandSender) {
         if (args.length==1)
             System.exit(0);
         else ServerLogger.info("Usage: "+commandUsage);
-        super.runCommand(args);
+        super.runCommand(args,commandSender);
     }
 
 }

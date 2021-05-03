@@ -20,12 +20,15 @@ public class Config {
 
     private String configFilePath;
     private File configFile;
+    private String fileName;
+    private static FileUtil fileUtil = new FileUtil();
 
     public Config(String pluginPath, String file)
     {
         try {
             String path = Server.getServer().getPluginData() + File.separator + pluginPath;
             File dir = new File(path);
+            this.fileName = file;
             if (!dir.exists()) dir.mkdir();
             File config = new File(path + File.separator + file + ".yml");
             if (!config.exists()) config.createNewFile();
@@ -35,6 +38,12 @@ public class Config {
         {
             e.printStackTrace();
         }
+    }
+
+    public boolean contains(String index)
+    {
+        if(getConfigValue(index)==null) return false;
+        else return true;
     }
 
     public void putObject(String index, Object value)
@@ -164,6 +173,8 @@ public class Config {
     {
         try{
             if (!configFile.exists()) configFile.createNewFile();
+            if (contains(data.split("\\:")[0]))
+                remove(data.split("\\:")[0]);
             BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (new FileOutputStream (configFilePath,true),"UTF-8"));
             bufferedWriter.write(data);
             bufferedWriter.newLine();;
@@ -172,6 +183,11 @@ public class Config {
         {
             e.printStackTrace();
         }
+    }
+
+    public void remove(String index)
+    {
+        if (contains(index)) fileUtil.removeLineFromFile(fileName+".yml",index+":"+getConfigValue(index));
     }
 
 }

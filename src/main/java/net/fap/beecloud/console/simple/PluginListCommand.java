@@ -20,7 +20,7 @@ public class PluginListCommand extends CommandHandler {
     }
 
     @Override
-    public void runCommand(String args[]) {
+    public void runCommand(String args[],String commandSender) {
         if (args.length==1)
         {
             String plugin = " ";
